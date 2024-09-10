@@ -1,13 +1,13 @@
 /**
  * Demo app for Ex4
- */
-#include <iostream>
+ */#include <iostream>
 #include <string>
 #include "node.hpp"
 #include "tree.hpp"
+#include "Complex.hpp"
 
 using namespace std;
-
+using std::string;
 
 int main()
 {
@@ -15,14 +15,14 @@ int main()
     Tree<double> tree;         // Binary tree that contains doubles
     tree.add_root(&node1);
     
-    cout<<&node1;  
+    cout << &node1;  
     Node<double> node2(1.2);
     Node<double> node3(1.3);
     Node<double> node4(1.4);
     Node<double> node5(1.5);
     Node<double> node6(1.6);
 
-    cout<<&node1;
+    cout << &node1;
 
     // Add sub-nodes to the tree
     tree.add_sub_node(&node1, &node2);
@@ -31,9 +31,9 @@ int main()
     tree.add_sub_node(&node2, &node5);
     tree.add_sub_node(&node3, &node6);
     
-    cout<<&node1;    
-    cout<<&node2;
-    cout<<&node3;
+    cout << &node1;
+    cout << &node2;
+    cout << &node3;
 
     // The tree should look like:
     /**
@@ -44,95 +44,73 @@ int main()
      *  1.4  1.5  1.6
      */
 
-//Try to add a child for a parent with a maximum amount of children
-    try{
-    tree.add_sub_node(&node1, &node6);
+    // Try to add a child for a parent with a maximum amount of children
+    try {
+        tree.add_sub_node(&node1, &node6);
+    }
+    catch(const out_of_range &e) {
+        cout << e.what() << endl; // Should print: "The parent Node already has the maximum number of children."
     }
 
-    catch(const out_of_range &e){
-        cout << e.what() << endl; // Should print:"The parent Node already has the maximum number of childern."
+    // Try to add sub-node for a tree without a root
+    Tree<double> tree1;
+    try {
+        tree1.add_sub_node(&node1, &node6);
+    }
+    catch(const logic_error &e) {
+        cout << e.what() << endl; // Should print: "There is no root for the tree."
     }
 
+    Tree<string> strTree;
 
-//Try to add sub-node for a tree that does not contain the parent Node
-   /* try{
-    tree.add_sub_node(&node1, &node6);
+    Node<string> nodeS1("root");
+    strTree.add_root(&nodeS1);
+
+    Node<string>* nodeS2 = new Node<string>("new root");  // Allocate memory
+    try {
+        strTree.add_root(nodeS2);  // Try to add another root
+    }
+    catch(const logic_error &e) {
+        cout << e.what() << endl; // Should print: "The tree already has a root."
     }
 
-    catch(const out_of_range &e){
-        cout << e.what() << endl; // Should print:"The tree doesn't contain the parent node ."
-    }*/
-//----------------------------------------------------------------------------
-
-//Try to add sub-node for a tree without a root
-Tree<double> tree1;
-
-    try{
-    tree1.add_sub_node(&node1, &node6);
-    }
-
-    catch(const logic_error &e){
-        cout << e.what() << endl; // Should print:"There is no root for the tree."
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-    for (auto node = tree.begin_pre_order(); node != tree.end_pre_order(); ++node)
-    {
-        cout << node->get_value() << endl;
+    // Pre-order traversal
+    for (auto it = tree.begin_pre_order(); it != tree.end_pre_order(); ++it) {
+        cout << it->getValue() << " " << endl;
     } // prints: 1.1, 1.2, 1.4, 1.5, 1.3, 1.6
 
-    for (auto node = tree.begin_post_order(); node != tree.end_post_order(); ++node)
-    {
-        cout << node->get_value() << endl;
+    // Post-order traversal
+    for (auto it = tree.begin_post_order(); it != tree.end_post_order(); ++it) {
+        cout << it->getValue() << endl;
     } // prints: 1.4, 1.5, 1.2, 1.6, 1.3, 1.1
 
-    for (auto node = tree.begin_in_order(); node != tree.end_in_order(); ++node)
-    {
-        cout << node->get_value() << endl;
+    // In-order traversal
+    for (auto it = tree.begin_in_order(); it != tree.end_in_order(); ++it) {
+        cout << it->getValue() << endl;
     } // prints: 1.4, 1.2, 1.5, 1.1, 1.6, 1.3
 
-    for (auto node = tree.begin_bfs_scan(); node != tree.end_bfs_scan(); ++node)
-    {
-        cout << node->get_value() << endl;
+    // Breadth-first search traversal
+    for (auto it = tree.begin_bfs_scan(); it != tree.end_bfs_scan(); ++it) {
+        cout << it->getValue() << endl;
     } // prints: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
 
-    for (auto node : tree)
-    {
-        cout << node.get_value() << endl;
-    } // same as BFS: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
+    // Try to create a 3-ary tree
+    Tree<double, 3> three_ary_tree;  // 3-ary tree.
+    three_ary_tree.add_root(&node1);
+    three_ary_tree.add_sub_node(&node1, &node2);
+    three_ary_tree.add_sub_node(&node1, &node3);
+    three_ary_tree.add_sub_node(&node1, &node4);
+    three_ary_tree.add_sub_node(&node2, &node5);
+    three_ary_tree.add_sub_node(&node3, &node6);
 
-    cout << tree; // Should print the graph using GUI.
-
-    Tree<double,3> three_ary_tree; // 3-ary tree.
-    three_ary_tree.add_root(root_node);
-    three_ary_tree.add_sub_node(root_node, n1);
-    three_ary_tree.add_sub_node(root_node, n2);
-    three_ary_tree.add_sub_node(root_node, n3);
-    three_ary_tree.add_sub_node(n1, n4);
-    three_ary_tree.add_sub_node(n2, n5);
-
-     // The tree should look like:
-    
+    // The tree should look like:
+    /*
      *       root = 1.1
      *     /      |     \
      *    1.2    1.3    1.4
      *   /        |
      *  1.5      1.6
      */
-    
+
+    delete nodeS2;  // Don't forget to free the dynamically allocated memory
 }
