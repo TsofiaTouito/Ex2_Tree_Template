@@ -1,10 +1,10 @@
 CXX=clang++
-CXXFLAGS=-std=c++11 -Werror -Wsign-conversion
+CXXFLAGS=-std=c++17 -Werror -Wsign-conversion
 VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all --error-exitcode=99
 
 # List of source files
-SOURCES=Demo.cpp
-HEADERS=node.hpp tree.hpp
+SOURCES=Demo.cpp Complex.cpp
+HEADERS=node.hpp tree.hpp Complex.hpp Iterator.hpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 # Default target: runs the demo
