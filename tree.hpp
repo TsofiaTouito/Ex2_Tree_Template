@@ -2,8 +2,10 @@
 #define TREE_HPP
 #include <iostream>
 #include <vector>
+#include "Iterator.hpp"
 #include "node.hpp"
 
+using namespace std;
 
 template<typename T, size_t K = 2>
 class Tree{
@@ -15,16 +17,24 @@ Node<T>* root;     //pointer to the root Node of the tree
 
 public:
 
-//constructor
+//constructors
 Tree() : root(nullptr){};
 
 
 //destructor
-~Tree(){
-    if(root){
-        delete root;
+void delete_sub_tree(Node<T>* node) {
+    if (!node) return;
+    for (Node<T>* child : node->getChildren()) {
+        delete_sub_tree(child);
     }
+    delete node;
 }
+
+
+~Tree() {
+    delete_sub_tree(root);
+}
+
 
 
 //Add root to the tree
@@ -65,41 +75,104 @@ void add_sub_node(Node<T>* parent, Node<T>* child){
 
 
 
-
-
-
-
-
-
-
-
-
-
 /*
 Iterator& myHeap();
-
-Iterator& begin_pre_order();
-
-Iterator& end_pre_order();
-
-Iterator& end_post_order();
-
-Iterator& begin_post_order();
-
-Iterator& end_in_order();
-
-Iterator& begin_in_order();
-
-Iterator& end_bfs_scan();
-
-Iterator& begin_bfs_scan();
-
-Iterator& end_dfs_scan();
-
-Iterator& begin_dfs_scan();
-
-
 */
+
+PreOrderIterator<T> begin_pre_order() const {
+
+    if constexpr(K != 2) {  //For a general tree (Not a binery treee) return DFS traversal
+        return DfsIterator<T>(root);
+    }
+    else{
+        return PreOrderIterator<T>(root);  // For binary tree (K==2)
+    }
+
+}
+
+PreOrderIterator<T> end_pre_order() const{
+    
+    if constexpr(K != 2){  //For a general tree (Not a binery treee) return DFS traversal
+        return DfsIterator<T>(nullptr);
+    }
+    else{
+        return PreOrderIterator<T>(nullptr);
+    }
+}
+
+
+//-----------------------------------------------------------------
+
+
+auto begin_post_order() const {
+    
+    if constexpr(K != 2){   //For a general tree (Not a binery treee) return DFS traversal
+        return DfsIterator<T>(root);
+    }
+    else{
+        return PostOrderIterator<T>(root);
+    }
+}
+
+auto end_post_order() const {
+    
+    if constexpr(K != 2){   //For a general tree (Not a binery treee) return DFS traversal
+        return DfsIterator<T>(nullptr);
+    }
+    else {    
+        return PostOrderIterator<T>(nullptr);
+    }
+}
+
+
+//-----------------------------------------------------------------
+
+
+auto begin_in_order() const {
+    
+    if constexpr(K != 2){  //For a general tree (Not a binery treee) return DFS traversal
+        return DfsIterator<T>(root);
+    }
+    else{
+        return InOrderIterator<T>(root);
+    }
+}
+
+auto end_in_order() const {
+    
+    if constexpr(K != 2){  //For a general tree (Not a binery treee) return DFS traversal
+        return DfsIterator<T>(nullptr);
+    }
+    else{
+        return InOrderIterator<T>(nullptr);
+    }
+
+}
+//-----------------------------------------------------------------
+
+
+BfsIterator<T> begin_bfs_scan() const {
+    return BfsIterator<T>(root);
+}
+
+BfsIterator<T> end_bfs_scan() const {
+    return BfsIterator<T>(nullptr);
+
+}
+
+
+//------------------------------------------------------------------
+
+
+DfsIterator<T> begin_dfs_scan() const {
+    return DfsIterator<T>(root);
+}
+
+DfsIterator<T> end_dfs_scan() const {
+    return DfsIterator<T>(nullptr);
+
+}
+
 
 };
 
