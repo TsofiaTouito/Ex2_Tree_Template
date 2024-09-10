@@ -21,10 +21,13 @@ Node(const T& val): value(val){}
 
 //Destructor
 ~Node(){
-    for(Node<T>* child : children){
-        delete child;
+
+    if(!children.empty()){
+        for(Node<T>* child : children){
+            delete child;
+        }
     }
-    children.clear();
+    
 }
 
 
@@ -47,8 +50,7 @@ void addChild(Node<T>* newCh){
     children.push_back(newCh);        
 }
 
-
-vector<vector<T>*>& getChildren(){
+const vector<Node<T>*>& getChildren() const {
     return children;
 }
 
