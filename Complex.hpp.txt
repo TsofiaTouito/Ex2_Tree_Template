@@ -1,0 +1,48 @@
+#include <iostream>
+
+using namespace std;
+
+
+
+
+class Complex{
+
+    private:
+    double rea, img;  //real for the real part, img for the imaginary aginery part
+
+    public:
+    Complex(const double& rea = 0.0,const double& img = 0.0) : rea(rea), img(img){};
+
+    //Getters 
+    double real() const;
+
+    double imagin() const;
+
+    //unary operators
+    bool operator!() const;
+    Complex operator-();
+
+    //binary operators
+    Complex operator+(const Complex&) const;
+    Complex& operator+=(const Complex&);
+    Complex& operator-=(const Complex&);
+    
+    Complex& operator*=(const Complex&);
+
+    Complex operator++();
+    Complex operator++(int);
+
+
+    friend Complex operator-(const Complex&);
+    friend Complex operator*(const Complex&);
+    friend bool operator==(const Complex&, const Complex&);
+    friend bool operator!=(const Complex&, const Complex&);
+
+    
+    friend ostream& operator<<(ostream& stream, const Complex& c){
+        stream << "(" << c.real() << " + " << c.imagin() <<"i" << endl;
+        return stream;
+    }
+
+
+};

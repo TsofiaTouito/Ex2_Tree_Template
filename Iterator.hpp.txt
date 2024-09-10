@@ -1,0 +1,270 @@
+#include <iostream>
+#include <stack>
+#include <queue>
+#include <algorithm>
+#include "node.hpp"
+
+
+template <typename T>
+class Iterator{
+
+    protected:
+    Node<T>* curr;
+
+    public:  
+    Iterator(Node<T>* node_ptr = nullptr) : curr(node_ptr) {}
+
+    virtual Node<T>* operator*() = 0;
+
+    virtual Iterator& operator++() = 0;
+
+    Node<T>* operator->() { return curr; }
+
+    bool operator!=(const Iterator& other) const { return curr != other.curr; }
+
+};
+
+
+//------------------------------------------------------------------------------------------
+
+
+template <typename T>
+class PreOrderIterator : public Iterator <T>{
+
+    private:
+    stack<Node<T>*> node_stack;
+
+
+    public:
+    PreOrderIterator(Node<T>* root){
+        if(root != nullptr){
+            node_stack.push(root);            //Insert the root into the stack
+            this->curr = node_stack.top();
+        }
+        else{
+            this->curr = nullptr;
+        }
+    }
+
+
+    //advances the iterator to the next element and returns the updated iterator
+    PreOrderIterator& operator++() override {
+        if(!node_stack.empty()){
+            this->curr = node_stack.top();   //The corrent Node point to the top of the stack
+            node_stack.pop();
+
+            //Iterate the children of the corrent Node and push them in reverse order into the stack
+            const auto& children = this->curr->getChildren();
+            for(auto it = children.rbegin() ; it != children.rend(); ++it){
+                node_stack.push(*it);
+            }
+        }
+        //Update the current Node
+        this->curr = (!node_stack.empty()) ? node_stack.top() : nullptr ;
+
+    return *this;
+    }
+    
+    // Returns a reference to the current element the iterator points to
+    Node<T>* operator*() override {
+        return this->curr;
+    }
+
+};
+
+
+//------------------------------------------------------------------------------------------
+
+
+template <typename T>
+class PostOrderIterator : public Iterator <T>{
+
+    private:
+    Node<T>* topNode;
+    stack<Node<T>*> stack;
+    Node<T>* lastVisited = nullptr; 
+
+    //Help function
+ void advance() {
+    // If the stack is empty, set curr to nullptr (traversal complete)
+    if (stack.empty()) {
+        this->curr = nullptr;
+        return;
+    }
+
+    topNode = stack.top();
+    auto& children = topNode->getChildren();
+
+    // Moving down the tree: push children if lastVisited is not a child of topNode
+    if (lastVisited == nullptr || 
+        find(children.begin(), children.end(), lastVisited) == children.end()) {
+        // Push children of topNode in reverse order (right child first, then left)
+        for (auto it = children.rbegin(); it != children.rend(); ++it) {
+            stack.push(*it);
+        }
+    } else {
+        // If coming back up the tree (i.e., all the children are processed)
+        stack.pop();
+        lastVisited = topNode;
+        this->curr = topNode; // Process this node after its children
+    }
+}
+
+
+    public:
+    PostOrderIterator(Node<T>* root) {
+    if (root) {
+        stack.push(root); // Start by pushing the root node
+        advance();        // Prepare the initial state of the iterator
+    } else {
+        this->curr = nullptr; // Handle case when root is nullptr
+    }
+}
+
+
+
+    //Advances the iterator to the next element in post-order traversal
+    PostOrderIterator& operator++() override {
+        advance();
+        return *this;        
+    }
+
+
+    //Returns a reference to the current element the iterator points to
+    Node<T>* operator*() override{
+            return this->curr;
+    }
+
+};
+
+
+//------------------------------------------------------------------------------------------
+
+
+template <typename T>
+class InOrderIterator : public Iterator <T>{
+
+    private:
+    stack<Node<T>*> node_stack;
+
+
+    //help function that push the node and all his left descendants
+    void leftPush(Node<T>* node){
+        while(node){
+            node_stack.push(node);
+            auto& children = node->getChildren();
+            node = children.empty() ? nullptr : children[0]; //In binary tree the children[0] is the left child
+        }
+    }
+
+
+    public:
+    InOrderIterator(Node<T>* root){
+        if(root){
+            leftPush(root);
+            this->curr = (!node_stack.empty()) ? node_stack.top() : nullptr ;
+        }
+        else{
+            this->curr = nullptr;
+        }
+    }
+
+    //advances the iterator to the next element and returns the updated iterator
+    InOrderIterator& operator++() override{
+        if(node_stack.empty()){
+            this->curr = nullptr;
+            return *this;
+        }
+
+        this->curr = node_stack.top();
+        node_stack.pop();
+
+        auto& children = this->curr->getChildren();
+        //If exist a right child to the poped node, push all his left descendants
+        if(children.size()>1){ 
+            Node<T>* rightChild = children[1];
+            leftPush(rightChild);
+        }
+
+        return *this;
+    }
+
+
+    //Returns a reference to the current element the iterator points to
+    Node<T>* operator*() override{
+        return this->curr;
+    }
+
+};
+
+
+//------------------------------------------------------------------------------------------
+
+
+template <typename T>
+class BfsIterator : public Iterator <T>{
+
+    private:
+    queue<Node<T>*> queue;
+
+
+    public:
+    BfsIterator(Node<T>* root){
+        if(root){
+            queue.push(root);
+            this->curr = queue.front();
+        }
+        else{
+            this->curr = nullptr;
+        }
+    }
+
+
+
+    //advances the iterator to the next element and returns the updated iterator
+    BfsIterator& operator++() override{
+        if(queue.empty()){
+            this->curr = nullptr;
+            return *this;
+        }
+        
+        this->curr = queue.front();
+        queue.pop();
+
+        auto& children = this->curr->getChildren();
+
+        if(!children.empty()){
+        //Iterate through the children and push them to the queue
+            for(auto it = children.begin() ; it != children.end() ; ++it){
+                queue.push(*it);
+            }
+        }
+        return *this;
+    }
+
+    //Returns a reference to the current element the iterator points to
+    Node<T>* operator*() override{
+        return this->curr;
+    }
+
+};
+
+
+//------------------------------------------------------------------------------------------
+
+template <typename T>
+class DfsIterator : public PreOrderIterator<T> {
+    
+    public:
+    DfsIterator(Node<T>* root) : PreOrderIterator<T>(root) {}
+
+    Node<T>* operator*() override {
+        return PreOrderIterator<T>::operator*();  //Call the base class's operator*
+    }
+
+    DfsIterator& operator++() override {
+        PreOrderIterator<T>::operator++();        //Call the base class's operator++
+        return *this;                             //Return the updated iterator
+    }
+
+};
