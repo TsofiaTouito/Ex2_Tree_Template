@@ -1,3 +1,5 @@
+// tsofiatouito2@gmail.com
+
 #ifndef TREE_HPP
 #define TREE_HPP
 #include <iostream>
@@ -16,7 +18,6 @@ private:
 Node<T>* root;     //pointer to the root Node of the tree
 
 
-
 public:
 
 //constructors
@@ -24,19 +25,7 @@ Tree() : root(nullptr){};
 
 
 //destructor
-void delete_sub_tree(Node<T>* node) {
-    if (!node) return;
-    for (Node<T>* child : node->getChildren()) {
-        delete_sub_tree(child);
-    }
-    delete node;
-}
-
-
-~Tree() {
-    delete_sub_tree(root);
-}
-
+  ~Tree() { delete root; } 
 
 
 //Add root to the tree
@@ -73,7 +62,8 @@ void add_sub_node(Node<T>* parent, Node<T>* child){
     
 }
 
-
+//------------------------------------------------------------------------------------------
+//Draw the tree using SFML
 
 void drawTree(sf::RenderWindow& window) {
     if (!this->root) {
@@ -142,10 +132,84 @@ void drawNode(sf::RenderWindow& window, Node<T>* node, float x, float y, float o
 
 
 
+void toMinHeap(){
 
-/*
-Iterator& myHeap();
-*/
+    if(K!=2){
+        throw logic_error("The tree isn't a binary tree .");
+    }
+
+    if(!root){
+        throw logic_error("There is no root for the tree.");
+    }
+
+    myHeap(this->root);   //A binary tree that has a root
+}
+
+
+
+
+
+void myHeap(Node<T>* node) {
+    if (!node) {
+        return;
+    }
+
+    // A binary tree has only 2 children, handle cases where children might be nullptr
+    Node<T>* leftChild = node->getChildren().size() > 0 ? node->getChildren()[0] : nullptr;
+    Node<T>* rightChild = node->getChildren().size() > 1 ? node->getChildren()[1] : nullptr;
+
+    // Recursive call for the left sub-tree and the right sub-tree
+    myHeap(leftChild);
+    myHeap(rightChild);
+
+    // Find the smallest value
+    Node<T>* smallest = node;
+
+    if (leftChild && leftChild->getValue() < smallest->getValue()) {
+        smallest = leftChild;
+    }
+    if (rightChild && rightChild->getValue() < smallest->getValue()) {
+        smallest = rightChild;
+    }
+
+    // Check if the parent is larger than its smallest child
+    if (smallest != node) {
+        T temp = node->getValue();
+        node->setValue(smallest->getValue());
+        smallest->setValue(temp);
+        myHeap(smallest);
+    }
+}
+
+
+
+
+////Iterators Begin&End function
+//---------------------------------------------------------------------------------------------------------------
+
+
+// Transform the tree into a min-heap and return an iterator to the beginning
+HeapOrderIterator<T> min_heap_begin() const{
+    return HeapOrderIterator<T>(root);   // Return iterator starting from root
+}
+
+// Return an iterator marking the end 
+HeapOrderIterator<T> min_heap_end() const{
+
+    if constexpr(K != 2) {  //For a general tree (Not a binery treee) print an error
+        throw invalid_argument("The tree isn't a binary tree .");
+    }
+        
+    else{
+        return HeapOrderIterator<T>(nullptr); 
+    }
+}
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------
+
 
 PreOrderIterator<T> begin_pre_order() const {
 
@@ -169,7 +233,7 @@ PreOrderIterator<T> end_pre_order() const{
 }
 
 
-//-----------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 
 
 auto begin_post_order() const {
@@ -193,7 +257,7 @@ auto end_post_order() const {
 }
 
 
-//-----------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
 
 
 auto begin_in_order() const {
@@ -216,7 +280,7 @@ auto end_in_order() const {
     }
 
 }
-//-----------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 
 BfsIterator<T> begin_bfs_scan() const {
@@ -229,7 +293,7 @@ BfsIterator<T> end_bfs_scan() const {
 }
 
 
-//------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 
 DfsIterator<T> begin_dfs_scan() const {
