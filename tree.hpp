@@ -2,10 +2,12 @@
 #define TREE_HPP
 #include <iostream>
 #include <vector>
+#include <SFML/Graphics.hpp>
 #include "Iterator.hpp"
 #include "node.hpp"
 
 using namespace std;
+
 
 template<typename T, size_t K = 2>
 class Tree{
@@ -71,6 +73,72 @@ void add_sub_node(Node<T>* parent, Node<T>* child){
     
 }
 
+
+
+void drawTree(sf::RenderWindow& window) {
+    if (!this->root) {
+        cout << "The tree has no root." << endl;
+        return;
+    }
+
+    // Load the font
+    sf::Font font;
+    if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) {
+        cout << "Failed to load font!" << endl;
+        return;
+    }
+
+    float offsetX = 600.f;  // Horizontal space between children nodes
+    float offsetY = 150.f;  // Vertical space between levels
+
+    drawNode(window, root, 400.f, 50.f, offsetX, offsetY, font);  // Pass root, not &root
+}
+
+
+
+void drawNode(sf::RenderWindow& window, Node<T>* node, float x, float y, float offsetX, float offsetY, sf::Font& font) {
+    if (!node) {
+        return;
+    }
+
+    // Draw the shape of Node
+    sf::CircleShape circle(30.f);
+    circle.setFillColor(sf::Color::White);
+    circle.setOutlineColor(sf::Color::White);
+    circle.setOutlineThickness(3.f);
+    circle.setPosition(x - circle.getRadius(), y - circle.getRadius()); // Center the circle
+    window.draw(circle);  // Draw in window
+
+    // Draw the value of the node into the shape
+    sf::Text value(node->getStrVal(), font);
+    value.setCharacterSize(12);
+    value.setFillColor(sf::Color::Black);
+    value.setPosition(x - value.getLocalBounds().width / 2.f, y - value.getLocalBounds().height / 2.f); 
+    window.draw(value);
+
+    // Draw the children of the current node
+    auto& children = node->getChildren();
+    if (!children.empty()) {
+        float childOffsetX = offsetX / (children.size() + 1);   // Calculate the intervals between the children 
+
+        for (size_t i = 0; i < children.size(); i++) {  // Change int to size_t
+            if (children[i]) {
+                float child_x = x - offsetX /2 + (i + 1) * childOffsetX;  // Update the child's position
+                float child_y = y + offsetY;  // Correct vertical position
+
+                // Draw line from parent to child
+                sf::Vertex line[] = {
+                    sf::Vertex(sf::Vector2f(x, y)),
+                    sf::Vertex(sf::Vector2f(child_x, child_y))
+                };
+                window.draw(line, 2, sf::Lines);
+
+                // Recursively draw children
+                drawNode(window, children[i], child_x, child_y, offsetX / 2.f, offsetY, font);
+            }
+        }
+    }
+}
 
 
 
