@@ -1,7 +1,9 @@
-/**
- * Demo app for Ex4
- */#include <iostream>
+
+#include <iostream>
 #include <string>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 #include "node.hpp"
 #include "tree.hpp"
 #include "Complex.hpp"
@@ -11,18 +13,26 @@ using std::string;
 
 int main()
 {
-    Node<double> node1(1.1);
-    Tree<double> tree;         // Binary tree that contains doubles
+
+
+    /*Create a binary tree that contains doubles :
+
+     *       root = 1.1
+     *     /       \
+     *    1.2      1.3
+     *   /  \      /
+     *  1.4  1.5  1.6
+     *///-----------------------------------------
+
+    Tree<double> tree;  
+    Node<double> node1(1.1);       
     tree.add_root(&node1);
-    
-    cout << &node1;  
+     
     Node<double> node2(1.2);
     Node<double> node3(1.3);
     Node<double> node4(1.4);
     Node<double> node5(1.5);
     Node<double> node6(1.6);
-
-    cout << &node1;
 
     // Add sub-nodes to the tree
     tree.add_sub_node(&node1, &node2);
@@ -31,20 +41,10 @@ int main()
     tree.add_sub_node(&node2, &node5);
     tree.add_sub_node(&node3, &node6);
     
-    cout << &node1;
-    cout << &node2;
-    cout << &node3;
 
-    // The tree should look like:
-    /**
-     *       root = 1.1
-     *     /       \
-     *    1.2      1.3
-     *   /  \      /
-     *  1.4  1.5  1.6
-     */
-
-    // Try to add a child for a parent with a maximum amount of children
+   
+    // Try to add a child for a parent with a maximum amount of children 
+    cout << "End cases check :" << endl;
     try {
         tree.add_sub_node(&node1, &node6);
     }
@@ -52,7 +52,8 @@ int main()
         cout << e.what() << endl; // Should print: "The parent Node already has the maximum number of children."
     }
 
-    // Try to add sub-node for a tree without a root
+
+    // Trying to add sub-node for a tree without a root
     Tree<double> tree1;
     try {
         tree1.add_sub_node(&node1, &node6);
@@ -61,6 +62,8 @@ int main()
         cout << e.what() << endl; // Should print: "There is no root for the tree."
     }
 
+
+    //Trying to add root to tree with exist root
     Tree<string> strTree;
 
     Node<string> nodeS1("root");
@@ -74,43 +77,128 @@ int main()
         cout << e.what() << endl; // Should print: "The tree already has a root."
     }
 
-    // Pre-order traversal
+
+
+
+
+
+    //print the tree to the screen using SFML
+    cout << "Draw the binary tree using SFML :" << endl;
+    // SFML setup
+    sf::RenderWindow window(sf::VideoMode(1000, 800), "Binary Tree Printing");
+    
+    while (window.isOpen()) {
+        sf::Event event;
+        
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+        }
+
+    // Clear the window
+    window.clear(sf::Color::Magenta);
+
+    // Draw the tree on the screen (passing font to avoid reloading)
+    tree.drawTree(window);
+
+    // Display the window content
+    window.display();
+
+}
+
+    //Scan the binary tree with all types of Iterators
+    cout <<"Iterate the binary tree ." <<endl;
+
+    cout << "Pre-order traversal :" <<endl;
     for (auto it = tree.begin_pre_order(); it != tree.end_pre_order(); ++it) {
-        cout << it->getValue() << " " << endl;
-    } // prints: 1.1, 1.2, 1.4, 1.5, 1.3, 1.6
+        cout << it->getValue() << " ";  
+    }// prints: 1.1, 1.2, 1.4, 1.5, 1.3, 1.6
+    cout << "\n" << endl;  
 
-    // Post-order traversal
+    cout << "Post-order traversal :" << endl;
     for (auto it = tree.begin_post_order(); it != tree.end_post_order(); ++it) {
-        cout << it->getValue() << endl;
+        cout << it->getValue() << " "; 
     } // prints: 1.4, 1.5, 1.2, 1.6, 1.3, 1.1
+    cout << "\n" << endl;  
 
-    // In-order traversal
+    cout << "In-order traversal :" <<endl;
     for (auto it = tree.begin_in_order(); it != tree.end_in_order(); ++it) {
-        cout << it->getValue() << endl;
+        cout << it->getValue() << " "; 
     } // prints: 1.4, 1.2, 1.5, 1.1, 1.6, 1.3
+    cout << "\n" << endl;  
 
-    // Breadth-first search traversal
+    cout <<" Breadth-first search traversal :"<< endl;
     for (auto it = tree.begin_bfs_scan(); it != tree.end_bfs_scan(); ++it) {
-        cout << it->getValue() << endl;
+        cout << it->getValue() << " "; 
     } // prints: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
+    cout << "\n" << endl;  
 
-    // Try to create a 3-ary tree
-    Tree<double, 3> three_ary_tree;  // 3-ary tree.
-    three_ary_tree.add_root(&node1);
-    three_ary_tree.add_sub_node(&node1, &node2);
-    three_ary_tree.add_sub_node(&node1, &node3);
-    three_ary_tree.add_sub_node(&node1, &node4);
-    three_ary_tree.add_sub_node(&node2, &node5);
-    three_ary_tree.add_sub_node(&node3, &node6);
 
-    // The tree should look like:
-    /*
-     *       root = 1.1
+
+
+
+
+    /* Create a 3-ary tree that contains Complex :
+    *
+     *       root = 3 +5i
      *     /      |     \
-     *    1.2    1.3    1.4
+     *   12 +6i   0    2 + 2i
      *   /        |
-     *  1.5      1.6
+     * 1.5      1.6+ i
      */
 
-    delete nodeS2;  // Don't forget to free the dynamically allocated memory
+    Tree<Complex, 3> three_ary_tree;
+    
+    Node<Complex> root(Complex(3, 5));
+    Node<Complex> n1(Complex(12, 6));
+    Node<Complex> n2(Complex(0, 0));
+    Node<Complex> n3(Complex(2, 2));
+    Node<Complex> n4(Complex(1.5, 0));
+    Node<Complex> n5(Complex(1.6, 1));
+
+    
+    three_ary_tree.add_root(&root);
+    three_ary_tree.add_sub_node(&root, &n1);
+    three_ary_tree.add_sub_node(&root, &n2);
+    three_ary_tree.add_sub_node(&root, &n3);
+    three_ary_tree.add_sub_node(&n1, &n4);
+    three_ary_tree.add_sub_node(&n2, &n5);
+
+
+
+
+    //print the tree to the screen using SFML
+    cout << "Draw the Complex 3-ary tree using SFML :" << endl;
+    //SFML
+
+
+
+
+
+    //SFML
+
+
+
+    //Scan the binary tree with all types of Iterators
+    cout <<"Iterate the Complex 3-ary tree ." <<endl;
+
+    cout << "Trying to iterate the tree with In-order traversal , will return DFS traversal :" <<endl;
+    for (auto it = three_ary_tree.begin_in_order(); it != three_ary_tree.end_in_order(); ++it) {
+        cout << it->getValue() << " ,"; 
+    } // prints: 3 + 5i , 12 + 6i, 1.5 , 0 , 1.6 + i ,2 + 2i 
+    cout << "\n" << endl;  
+
+    cout <<" Breadth-first search traversal :"<< endl;
+    for (auto it = three_ary_tree.begin_bfs_scan(); it != three_ary_tree.end_bfs_scan(); ++it) {
+        cout << it->getValue() << " ,"; 
+    } // prints:  3 + 5i , 12 + 6i , 0 , 2 + 2i , 1.5 ,  1.6 + i
+    cout << "\n" << endl;  
+
+
+
+
+
+   
+  //  delete nodeS2;  // Don't forget to free the dynamically allocated memory
 }
