@@ -56,7 +56,3 @@ Unit tests are provided in `Test.cpp` and `TestCounter.cpp` using the Doctest fr
    ```bash
    ./Test
    ```
-
----
-
-Feel free to adjust or add more details as needed!
