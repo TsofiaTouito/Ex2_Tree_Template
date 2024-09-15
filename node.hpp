@@ -1,3 +1,5 @@
+// tsofiatouito2@gmail.com
+
 #ifndef NODE_HPP
 #define NODE_HPP
 #include <iostream>
@@ -20,15 +22,8 @@ Node(const T& val): value(val){}
 
 
 //Destructor
-~Node(){
+~Node() { for (auto child : children) delete child; }
 
-    if(!children.empty()){
-        for(Node<T>* child : children){
-            delete child;
-        }
-    }
-    
-}
 
 
 const T& getValue(){
