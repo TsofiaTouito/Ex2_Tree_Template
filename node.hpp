@@ -35,6 +35,9 @@ const T& getValue(){
     return this->value;
 }
 
+const string getStrVal(){
+    return to_string(this->value);
+}
 
 void setValue(T val){
     this->value = val;
