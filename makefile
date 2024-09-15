@@ -1,32 +1,33 @@
-CXX=clang++
-CXXFLAGS=-std=c++17 -Werror -Wsign-conversion
-VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all --error-exitcode=99
+# Compiler and flags
+CXX = g++
+CXXFLAGS = -std=c++2a -Wall -Wextra
 
-# List of source files
-SOURCES=Demo.cpp Complex.cpp
-HEADERS=node.hpp tree.hpp Complex.hpp Iterator.hpp
-OBJECTS=$(SOURCES:.cpp=.o)
+# SFML include and library paths
+SFML_INCLUDE = -I/Users/your_username/SFML/include
+SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
-# Default target: runs the demo
-run: demo
-	./demo
+# Source files
+MAIN_SRCS = Demo.cpp Complex.cpp
 
-# Build the demo executable
-demo: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ -o demo
+# Object files
+MAIN_OBJS = $(MAIN_SRCS:.cpp=.o)
 
-# Run clang-tidy with specified checks and warnings
-tidy:
-	clang-tidy $(SOURCES) $(HEADERS) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=-* --
+# Executable names
+DEMO_TARGET = demo
 
-# Run valgrind memory check on demo
-valgrind: demo
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./demo 2>&1 | { egrep "lost| at " || true; }
+# Default target (no longer building demo by default)
+#all: $(DEMO_TARGET)
 
-# Compile .cpp files to .o object files
-%.o: %.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) --compile $< -o $@
+# Link the main program (tree)
+tree: $(MAIN_OBJS)
+	$(CXX) $(CXXFLAGS) $(SFML_INCLUDE) $^ -o $@ $(SFML_LIBS)
+
+# Compile source files into object files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(SFML_INCLUDE) -c $< -o $@
 
 # Clean up generated files
 clean:
-	rm -f *.o demo
+	rm -f $(MAIN_OBJS) $(DEMO_TARGET) tree tree.o
+
+#$(TEST_OBJS) $(TEST_TARGET) TestCounter.o 
