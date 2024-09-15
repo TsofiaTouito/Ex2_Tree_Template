@@ -81,18 +81,18 @@ class PostOrderIterator : public Iterator <T>{
 
     private:
     Node<T>* topNode;
-    stack<Node<T>*> stack;
+    stack<Node<T>*> node_stack;
     Node<T>* lastVisited = nullptr; 
 
     //Help function
  void advance() {
     // If the stack is empty, set curr to nullptr (traversal complete)
-    if (stack.empty()) {
+    if (node_stack.empty()) {
         this->curr = nullptr;
         return;
     }
 
-    topNode = stack.top();
+    topNode = node_stack.top();
     auto& children = topNode->getChildren();
 
     // Moving down the tree: push children if lastVisited is not a child of topNode
@@ -100,11 +100,11 @@ class PostOrderIterator : public Iterator <T>{
         find(children.begin(), children.end(), lastVisited) == children.end()) {
         // Push children of topNode in reverse order (right child first, then left)
         for (auto it = children.rbegin(); it != children.rend(); ++it) {
-            stack.push(*it);
+            node_stack.push(*it);
         }
     } else {
         // If coming back up the tree (i.e., all the children are processed)
-        stack.pop();
+        node_stack.pop();
         lastVisited = topNode;
         this->curr = topNode; // Process this node after its children
     }
@@ -114,7 +114,7 @@ class PostOrderIterator : public Iterator <T>{
     public:
     PostOrderIterator(Node<T>* root) {
     if (root) {
-        stack.push(root); // Start by pushing the root node
+        node_stack.push(root); // Start by pushing the root node
         advance();        // Prepare the initial state of the iterator
     } else {
         this->curr = nullptr; // Handle case when root is nullptr
@@ -205,14 +205,14 @@ template <typename T>
 class BfsIterator : public Iterator <T>{
 
     private:
-    queue<Node<T>*> queue;
+    queue<Node<T>*> node_queue;
 
 
     public:
     BfsIterator(Node<T>* root){
         if(root){
-            queue.push(root);
-            this->curr = queue.front();
+            node_queue.push(root);
+            this->curr = node_queue.front();
         }
         else{
             this->curr = nullptr;
@@ -223,20 +223,20 @@ class BfsIterator : public Iterator <T>{
 
     //advances the iterator to the next element and returns the updated iterator
     BfsIterator& operator++() override{
-        if(queue.empty()){
+        if(node_queue.empty()){
             this->curr = nullptr;
             return *this;
         }
         
-        this->curr = queue.front();
-        queue.pop();
+        this->curr = node_queue.front();
+        node_queue.pop();
 
         auto& children = this->curr->getChildren();
 
         if(!children.empty()){
         //Iterate through the children and push them to the queue
             for(auto it = children.begin() ; it != children.end() ; ++it){
-                queue.push(*it);
+                node_queue.push(*it);
             }
         }
         return *this;
