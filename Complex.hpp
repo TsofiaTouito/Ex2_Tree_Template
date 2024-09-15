@@ -1,4 +1,8 @@
+// tsofiatouito2@gmail.com
+
 #include <iostream>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -38,11 +42,20 @@ class Complex{
     friend bool operator==(const Complex&, const Complex&);
     friend bool operator!=(const Complex&, const Complex&);
 
-    
-    friend ostream& operator<<(ostream& stream, const Complex& c){
-        stream << "(" << c.real() << " + " << c.imagin() <<"i" << endl;
-        return stream;
+    // Friend function to convert Complex to string
+    friend std::string to_string(const Complex& c) {
+        std::ostringstream oss;
+        if (c.img < 0) {
+            oss << c.rea << " - " << -c.img << "i";
+        } else {
+            oss << c.rea << " + " << c.img << "i";
+        }
+        return oss.str();
     }
 
+    // Overload ostream operator
+    friend std::ostream& operator<<(std::ostream& stream, const Complex& c) {
+        return stream << to_string(c);
+    }
 
 };
