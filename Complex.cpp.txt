@@ -41,12 +41,13 @@ Complex& Complex::operator-=(const Complex& other){
     
 // (a+bi)*(c+di) = 
 // (ac-bd) + (ad+bc)i
-Complex& Complex::operator*=(const Complex& other){
-    double new_re = rea*other.real() - img*other.imagin();
-    double new_im = rea*other.imagin() + img*other.real();
+Complex& Complex::operator*=(const Complex& other) {
+    double new_re = rea * other.real() - img * other.imagin();
+    double new_im = rea * other.imagin() + img * other.real();
+    rea = new_re;  // Update real part
+    img = new_im;  // Update imaginary part
     return *this;
 }
-
 
 Complex Complex::operator++(){
     this->rea++;
