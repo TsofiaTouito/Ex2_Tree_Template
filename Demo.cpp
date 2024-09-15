@@ -1,3 +1,4 @@
+// tsofiatouito2@gmail.com
 
 #include <iostream>
 #include <string>
@@ -134,7 +135,44 @@ int main()
     } // prints: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
     cout << "\n" << endl;  
 
+    
+    //Transform the binary tree into a minimum stack and traversal the result
+    tree.toMinHeap();
+   cout << "Transfer the tree to be a min- heap." <<endl;
+   cout << "MinHeap order:" <<endl;
+   for (auto it = tree.min_heap_begin(); it != tree.min_heap_end(); ++it) 
+   {
+        cout << it->getValue() << endl;
+    } 
+    cout << "\n" << endl;  
 
+
+
+
+    //print the tree to the screen using SFML
+    cout << "Draw the transfer binary tree to min-heap using SFML :" << endl;
+    
+    sf::RenderWindow window2(sf::VideoMode(1000, 800), "Complex 3-ary tree Printing");
+    
+    while (window2.isOpen()) {
+        sf::Event event;
+        
+        while (window2.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window2.close();
+            }
+        }
+
+    // Clear the window
+    window2.clear(sf::Color::Yellow);
+
+    // Draw the tree on the screen (passing font to avoid reloading)
+    tree.drawTree(window2);
+
+    // Display the window content
+    window2.display();
+
+}
 
 
 
@@ -170,8 +208,28 @@ int main()
 
     //print the tree to the screen using SFML
     cout << "Draw the Complex 3-ary tree using SFML :" << endl;
-    //SFML
+    
+    sf::RenderWindow window3(sf::VideoMode(1000, 800), "Complex 3-ary tree Printing");
+    
+    while (window3.isOpen()) {
+        sf::Event event;
+        
+        while (window3.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window3.close();
+            }
+        }
 
+    // Clear the window
+    window3.clear(sf::Color::Blue);
+
+    // Draw the tree on the screen (passing font to avoid reloading)
+    three_ary_tree.drawTree(window3);
+
+    // Display the window content
+    window3.display();
+
+}
 
 
 
