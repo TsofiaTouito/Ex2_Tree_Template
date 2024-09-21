@@ -18,22 +18,22 @@ int main()
 
     /*Create a binary tree that contains doubles :
 
-     *       root = 1.1
+     *       root = 1.6
      *     /       \
      *    1.2      1.3
      *   /  \      /
-     *  1.4  1.5  1.6
+     *  1.4  1.5  1.1
      *///-----------------------------------------
 
     Tree<double> tree;  
-    Node<double> node1(1.1);       
+    Node<double> node1(1.6);       
     tree.add_root(&node1);
      
     Node<double> node2(1.2);
     Node<double> node3(1.3);
     Node<double> node4(1.4);
     Node<double> node5(1.5);
-    Node<double> node6(1.6);
+    Node<double> node6(1.1);
 
     // Add sub-nodes to the tree
     tree.add_sub_node(&node1, &node2);
@@ -114,35 +114,35 @@ int main()
     cout << "Pre-order traversal :" <<endl;
     for (auto it = tree.begin_pre_order(); it != tree.end_pre_order(); ++it) {
         cout << it->getValue() << " ";  
-    }// prints: 1.1, 1.2, 1.4, 1.5, 1.3, 1.6
+    }// prints: 1.6, 1.2, 1.4, 1.5, 1.3, 1.1
     cout << "\n" << endl;  
 
     cout << "Post-order traversal :" << endl;
     for (auto it = tree.begin_post_order(); it != tree.end_post_order(); ++it) {
         cout << it->getValue() << " "; 
-    } // prints: 1.4, 1.5, 1.2, 1.6, 1.3, 1.1
+    } // prints: 1.4, 1.5, 1.2, 1.1, 1.3, 1.6
     cout << "\n" << endl;  
 
     cout << "In-order traversal :" <<endl;
     for (auto it = tree.begin_in_order(); it != tree.end_in_order(); ++it) {
         cout << it->getValue() << " "; 
-    } // prints: 1.4, 1.2, 1.5, 1.1, 1.6, 1.3
+    } // prints: 1.4, 1.2, 1.5, 1.6, 1.1, 1.3
     cout << "\n" << endl;  
 
     cout <<" Breadth-first search traversal :"<< endl;
     for (auto it = tree.begin_bfs_scan(); it != tree.end_bfs_scan(); ++it) {
         cout << it->getValue() << " "; 
-    } // prints: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
+    } // prints: 1.6, 1.2, 1.3, 1.4, 1.5, 1.1
     cout << "\n" << endl;  
 
     
     //Transform the binary tree into a minimum stack and traversal the result
     tree.toMinHeap();
-   cout << "Transfer the tree to be a min- heap." <<endl;
-   cout << "MinHeap order:" <<endl;
+   cout << "Transfer the tree to be a Min Heap." <<endl;
+   cout << "Min Heap order :" <<endl;
    for (auto it = tree.min_heap_begin(); it != tree.min_heap_end(); ++it) 
    {
-        cout << it->getValue() << endl;
+        cout << it->getValue() <<" " ;
     } 
     cout << "\n" << endl;  
 
@@ -256,7 +256,5 @@ int main()
 
 
 
-
-   
   //  delete nodeS2;  // Don't forget to free the dynamically allocated memory
 }
