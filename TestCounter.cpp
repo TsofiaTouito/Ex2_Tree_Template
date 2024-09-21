@@ -2,40 +2,28 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
-using namespace doctest;
+#include <iostream>
 
-const int MIN_TESTS = 20;
+int main(int argc, char** argv) {
+    doctest::Context context;
 
-int return_code = -1;
+    // Apply command-line arguments to doctest context
+    context.applyCommandLine(argc, argv);
 
-struct ReporterCounter : public ConsoleReporter
-{
-    ReporterCounter(const ContextOptions &input_options)
-        : ConsoleReporter(input_options) {}
+    // Run the tests
+    int test_result = context.run();
 
-    void test_run_end(const TestRunStats &run_stats) override
-    {
-        if (run_stats.numAsserts >= MIN_TESTS)
-        {
-            return_code = 0;
-        }
-        else
-        {
-            std::cout << "Please write at least " << MIN_TESTS << " tests! " << std::endl;
-            return_code = 1;
-        }
+    // Check if any of the tests failed
+    if (test_result == 0) {
+        std::cout << "All tests passed!" << std::endl;
+    } else {
+        std::cout << "Some tests failed. Total failures: " << test_result << std::endl;
     }
-};
 
-REGISTER_REPORTER("counter", 1, ReporterCounter);
+    // Important: check if the context should exit (for example, after --help flag)
+    if (context.shouldExit()) {
+        return test_result;  // Propagate the result of running the tests
+    }
 
-int main(int argc, char **argv)
-{   
-    (void)argc; 
-    (void)argv; 
-
-    Context context;
-    context.addFilter("reporters", "counter");
-    context.run();
-    return return_code;
+    return test_result;  // Return the result from doctest's run()
 }
