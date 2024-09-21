@@ -1,4 +1,6 @@
 // tsofiatouito2@gmail.com
+#ifndef ITERATOR_HPP
+#define ITERATOR_HPP
 
 #include <iostream>
 #include <stack>
@@ -15,6 +17,8 @@ class Iterator{
 
     public:  
     Iterator(Node<T>* node_ptr = nullptr) : curr(node_ptr) {}
+
+    virtual ~Iterator() {};
 
     virtual Node<T>* operator*() = 0;
 
@@ -67,7 +71,7 @@ class HeapOrderIterator {
     bool operator!=(const HeapOrderIterator& other) const 
     {
         // Iterators are not equal if one is not empty and the other is empty
-        return !nodeQueue.empty() || !other.nodeQueue.empty();
+        return nodeQueue != other.nodeQueue;
     }
 
     // Dereference operator to get the current node
@@ -107,7 +111,7 @@ class PreOrderIterator : public Iterator <T>{
     //advances the iterator to the next element and returns the updated iterator
     PreOrderIterator& operator++() override {
         if(!node_stack.empty()){
-            this->curr = node_stack.top();   //The corrent Node point to the top of the stack
+            //this->curr = node_stack.top();   //The corrent Node point to the top of the stack
             node_stack.pop();
 
             //Iterate the children of the corrent Node and push them in reverse order into the stack
@@ -131,6 +135,8 @@ class PreOrderIterator : public Iterator <T>{
 
 
 //------------------------------------------------------------------------------------------
+
+
 template <typename T>
 class PostOrderIterator : public Iterator<T> {
 private:
@@ -139,6 +145,13 @@ private:
 
     // Helper function to advance the iterator
     void advance() {
+
+        // If the stack is empty, we're done with the traversal
+        if (node_stack.empty()) {
+            this->curr = nullptr;
+        return;
+        }
+
         while (!node_stack.empty()) {
             Node<T>* topNode = node_stack.top();
             auto& children = topNode->getChildren();
@@ -160,8 +173,7 @@ private:
             }
         }
 
-        // If the stack is empty, we're done with the traversal
-        this->curr = nullptr;
+
     }
 
 public:
@@ -308,3 +320,4 @@ class DfsIterator : public PreOrderIterator<T> {
 
 
 
+#endif 
