@@ -42,6 +42,17 @@ This project implements a container for a k-ary tree, where each vertex can have
    ./tree
    ```
 
+   
+3. To Run the demonstrate GUI printing by SFML:
+   - Write the command in the terminal:
+   ```bash
+   make gui_demo
+   ```
+
+5. Run the GUI :
+   ```bash
+   ./gui_demo
+   ```
    This will display the tree using SFML. To continue with the program, close the SFML window after it appears.
 
 ## Testing
