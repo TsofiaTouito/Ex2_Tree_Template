@@ -86,7 +86,7 @@ int main()
     //print the tree to the screen using SFML
     cout << "Draw the transfer binary tree to min-heap using SFML :" << endl;
     
-    sf::RenderWindow window2(sf::VideoMode(1000, 800), "Complex 3-ary tree Printing");
+    sf::RenderWindow window2(sf::VideoMode(1000, 800), "Min-Heap tree Printing");
     
     while (window2.isOpen()) {
         sf::Event event;
